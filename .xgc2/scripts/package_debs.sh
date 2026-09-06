@@ -194,6 +194,13 @@ package_adapter() {
   mkdir -p "${pkg_root}"
   copy_path "${PREFIX_ROOT}/share/${ros_package}" "${pkg_root}"
   copy_path "${PREFIX_ROOT}/lib/${ros_package}" "${pkg_root}"
+  if [[ "${package}" == "${PX4_PACKAGE}" ]]; then
+    copy_path "${PREFIX_ROOT}/include/${ros_package}" "${pkg_root}"
+    copy_path "${PREFIX_ROOT}/lib/lib${ros_package}_operations.a" "${pkg_root}"
+    copy_path "${PREFIX_ROOT}/lib/pkgconfig/${ros_package}.pc" "${pkg_root}"
+    test -f "${pkg_root}${PREFIX}/include/${ros_package}/px4_operations.hpp"
+    test -f "${pkg_root}${PREFIX}/lib/lib${ros_package}_operations.a"
+  fi
   copy_path "${INSTALL_ROOT}/usr/share/xgc2/adapter-definitions/${definition_id}.json" "${pkg_root}"
   copy_path "${INSTALL_ROOT}/usr/share/xgc2/process-definitions/${definition_id}.json" "${pkg_root}"
   copy_path "${INSTALL_ROOT}/usr/share/xgc2/robot-adapter-profiles/${definition_id}.json" "${pkg_root}"
@@ -283,6 +290,7 @@ package_forwarder() {
   mkdir -p "${pkg_root}"
   copy_path "${PREFIX_ROOT}/share/${ros_package}" "${pkg_root}"
   copy_path "${PREFIX_ROOT}/lib/${ros_package}" "${pkg_root}"
+
   copy_path "${INSTALL_ROOT}${process_definition}" "${pkg_root}"
   if [[ ! -x "${pkg_root}${executable}" ]]; then
     echo "missing installed Mocap Rotor Forwarder executable" >&2

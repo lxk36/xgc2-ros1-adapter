@@ -56,7 +56,11 @@ add_custom_command(
 add_custom_target(${PROJECT_NAME}_contract_metadata
   DEPENDS "${CONTRACT_METADATA_HDR}")
 
-catkin_package()
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}_operations
+  CATKIN_DEPENDS roscpp mavros_msgs
+)
 
 include_directories(
   include
@@ -156,6 +160,15 @@ if(CATKIN_ENABLE_TESTING)
     )
   endif()
 endif()
+
+install(TARGETS ${PROJECT_NAME}_operations
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+install(FILES
+  include/${PROJECT_NAME}/px4_operations.hpp
+  include/${PROJECT_NAME}/px4_service_protocol.hpp
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
 
 install(TARGETS
   ${PROJECT_NAME}_node

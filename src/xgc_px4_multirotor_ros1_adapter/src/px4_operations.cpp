@@ -204,10 +204,11 @@ public:
     std::string detail;
   };
 
-  NativeServiceHelper(std::string arm_service_endpoint,
+  NativeServiceHelper(std::string helper_executable, std::string arm_service_endpoint,
                       std::string mode_service_endpoint,
                       std::string reboot_service_endpoint)
-      : arm_service_endpoint_(std::move(arm_service_endpoint)),
+      : helper_executable_(std::move(helper_executable)),
+        arm_service_endpoint_(std::move(arm_service_endpoint)),
         mode_service_endpoint_(std::move(mode_service_endpoint)),
         reboot_service_endpoint_(std::move(reboot_service_endpoint)) {}
 
@@ -362,8 +363,8 @@ private:
       return false;
     }
 
-    std::string helper_path;
-    if (!currentExecutableSibling(kServiceHelperExecutable, &helper_path,
+    std::string helper_path = helper_executable_;
+    if (helper_path.empty() && !currentExecutableSibling(kServiceHelperExecutable, &helper_path,
                                   &failure->detail)) {
       failure->state = CallState::kUndispatchedTransportError;
       return false;
@@ -462,6 +463,7 @@ private:
     process_id_ = -1;
   }
 
+  const std::string helper_executable_;
   const std::string arm_service_endpoint_;
   const std::string mode_service_endpoint_;
   const std::string reboot_service_endpoint_;
@@ -698,6 +700,10 @@ Px4OperationExecutor::Create(ros::NodeHandle node_handle, Config config,
                                 error)) {
     return nullptr;
   }
+  if (!config.helper_executable.empty() && config.helper_executable.front() != '/') {
+    if (error != nullptr) *error = "PX4 service helper path must be absolute";
+    return nullptr;
+  }
   if (config.arm_service_endpoint == config.mode_service_endpoint ||
       config.arm_service_endpoint == config.reboot_service_endpoint ||
       config.mode_service_endpoint == config.reboot_service_endpoint) {
@@ -770,7 +776,7 @@ Px4OperationExecutor::Px4OperationExecutor(ros::NodeHandle node_handle,
       allowed_modes_(std::move(config.allowed_modes)),
       state_(std::make_shared<StateStore>()),
       native_service_helper_(new NativeServiceHelper(
-          config.arm_service_endpoint, config.mode_service_endpoint,
+          config.helper_executable, config.arm_service_endpoint, config.mode_service_endpoint,
           config.reboot_service_endpoint)) {
   if (config.require_state) {
     const std::shared_ptr<StateStore> state = state_;

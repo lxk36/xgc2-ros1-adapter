@@ -271,3 +271,19 @@ rosrun xgc_px4_multirotor_ros1_adapter \
 ```
 
 The repository is distributed under the BSD 3-Clause License in `LICENSE`.
+
+### Reusing bounded PX4 service operations
+
+The PX4 catkin package exports `xgc_px4_multirotor_ros1_adapter_operations` and
+`px4_operations.hpp` for existing ROS1 controllers. Consumers use the same
+`Px4OperationExecutor` and versioned helper transport as the Adapter. A caller
+outside the Adapter executable directory supplies a trusted absolute
+`Config::helper_executable`; an empty path preserves the Adapter's existing
+sibling lookup. The installed helper remains owned by this package. Relative
+helper paths are rejected. Command acceptance is not fresh FCU state confirmation;
+a dispatched timeout is uncertain and must not be retried blindly. Callers own
+intent authorization, admission bounds, and absolute enqueue deadlines.
+
+The 0.5.0-32 package installs the narrow headers, static operations archive and
+catkin/pkg-config export. The operations archive links ROS/MAVROS only; it does
+not expose the Adapter Runtime SDK as a downstream controller dependency.

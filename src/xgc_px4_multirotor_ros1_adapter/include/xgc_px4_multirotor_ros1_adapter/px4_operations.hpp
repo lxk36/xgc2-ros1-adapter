@@ -127,6 +127,9 @@ const char *px4RebootReadinessDetail(Px4RebootReadiness readiness);
 class Px4OperationExecutor {
 public:
   struct Config {
+    // Empty keeps the Adapter executable-sibling default. External consumers
+    // provide the installed helper path from their trusted package configuration.
+    std::string helper_executable;
     std::string state_endpoint;
     std::string arm_service_endpoint;
     std::string mode_service_endpoint;

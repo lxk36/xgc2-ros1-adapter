@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-ros1-adapters
 name: XGC2 ROS1 Robot Adapters
-version: 0.5.0-31
+version: 0.5.0-32
 kind: ros1-apt
 summary: Robot-owned ROS1 semantic adapters plus the separate read-only Mocap Rotor onboard Zenoh forwarder.
 groups:
@@ -100,6 +100,9 @@ usage:
     statically in both Mocap Rotor packages.
 ownership:
   paths:
+  - /opt/ros/noetic/include/xgc_px4_multirotor_ros1_adapter
+  - /opt/ros/noetic/lib/libxgc_px4_multirotor_ros1_adapter_operations.a
+  - /opt/ros/noetic/lib/pkgconfig/xgc_px4_multirotor_ros1_adapter.pc
   - /opt/ros/noetic/share/xgc_px4_multirotor_ros1_adapter
   - /opt/ros/noetic/lib/xgc_px4_multirotor_ros1_adapter/xgc_px4_multirotor_ros1_adapter_node
   - /opt/ros/noetic/lib/xgc_px4_multirotor_ros1_adapter/xgc_px4_multirotor_ros1_adapter_service_helper
@@ -137,4 +140,4 @@ release:
     xgc2-protobuf: rebuild
     xgc2-scout-msgs: rebuild
   apt_versions:
-    focal: 0.5.0-31
+    focal: 0.5.0-32
